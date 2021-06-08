@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      html,
+      body {
+        background-color: black;
+        height: 100%;
+        margin: 0;
+        /* cursor: none; */
+      }
+      #startButton {
+        margin: 10px;
+      }
+    </style>
+    <title>Main Radio World</title>
+  </head>
+  <body style="font-family: monospace">
+    <div id="overlay" style="margin: 0 auto">
+      <button id="startButton" style="font-family: monospace">start</button>
+      <audio id="audio" autoplay controls muted style="display: none"></audio>
+    </div>
+
+    <div id="blocker" style="position: fixed">
+      <div id="instructions">
+        <p style="font-size: 36px; color: white; padding: 20px">
+          Click start to play
+        </p>
+        <p style="color: white; padding: 20px">
+          Move: WASD<br />
+          Jump: SPACE<br />
+          Look: MOUSE
+        </p>
+      </div>
+    </div>
+
+    <div id="container"></div>
+    <!-- <script type="module" src="js/vector.js"></script> -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>
