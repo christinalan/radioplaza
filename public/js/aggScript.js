@@ -26,6 +26,8 @@ let script;
 let overlay;
 
 let container = document.getElementById("container");
+const blocker = document.getElementById("blocker");
+const instructions = document.getElementById("instructions");
 
 function clearContainer() {
   while (container.firstChild) container.removeChild(container.firstChild);
@@ -45,6 +47,9 @@ window.addEventListener("load", () => {
   function start() {
     overlay = document.getElementById("overlay");
     overlay.remove();
+
+    instructions.style.display = "none";
+    blocker.style.display = "none";
 
     randomPick = Math.floor(Math.random() * scripts.length);
     newSource = scripts[randomPick];
