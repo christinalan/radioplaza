@@ -27,51 +27,6 @@ socket.on("connect", () => {
   console.log("listener connected");
 });
 
-socket.on("offer", (id, description) => {
-  peerConnection = new RTCPeerConnection(config);
-  peerConnection
-    .setRemoteDescription(description)
-    .then(() => peerConnection.createAnswer())
-    .then((sdp) => peerConnection.setLocalDescription(sdp))
-    .then(() => {
-      socket.emit("answer", id, peerConnection.localDescription);
-    });
-  peerConnection.ontrack = (event) => {
-    // console.log(event.streams);
-    audio.srcObject = event.streams[0];
-    audioStream = new MediaStream(event.streams[0]);
-    if (audio) {
-      audio.srcObject = event.streams[0];
-    }
-    return audioStream;
-  };
-  peerConnection.onicecandidate = (event) => {
-    if (event.candidate) {
-      socket.emit("candidate", id, event.candidate);
-    }
-  };
-});
-
-socket.on("candidate", (id, candidate) => {
-  peerConnection
-    .addIceCandidate(new RTCIceCandidate(candidate))
-    .catch((e) => console.log(ed));
-});
-
-socket.on("connect", () => {
-  socket.emit("listener is connected to server");
-});
-
-socket.on("broadcaster", () => {
-  let message = "stina says hello!";
-  socket.emit("listener", message);
-});
-
-window.onunload = window.onbeforeunload = () => {
-  socket.close();
-  peerConnection.close();
-};
-
 ///////////////////////////////END OF WEBRTC
 
 let scene, camera, renderer, clock, controls;
@@ -109,8 +64,12 @@ let fft;
 
 listenButton.addEventListener("click", () => {
   console.log("fetching audio from radio page");
-  audio.play();
-  audio.muted = false;
+  // audio.play();
+  // audio.muted = false;
+
+  audio.addEventListener("loadeddata", () => {
+    console.log("hello");
+  });
 
   init();
 
@@ -353,50 +312,17 @@ function init() {
   listener = new THREE.AudioListener();
   camera.add(listener);
 
-  //getting devices
-  function getConnectedDevices(type, callback) {
-    navigator.mediaDevices.enumerateDevices().then((devices) => {
-      const filtered = devices.filter((device) => device.kind === type);
-      callback(filtered);
-    });
-  }
-
-  // audioSource = new THREE.PositionalAudio(listener);
-  // audioSource.setMediaStreamSource(audioEl);
-  // scene.add(audioSource);
-
-  // console.log(audioEl.srcObject);
-
-  getConnectedDevices("audioinput", (microphones) =>
-    console.log("mics found", microphones)
-  );
-
-  navigator.mediaDevices
-    .getUserMedia({ audio: true, video: false })
-    .then(handleSuccess);
-
-  function createElements() {
-    audio = document.createElement("audio");
-    audio.setAttribute("id", "audio");
-    document.body.appendChild(audio);
-
-    audio.addEventListener("loadeddata", () => {
-      audio.play();
-    });
-  }
-
-  function handleSuccess(stream) {
-    mic = new THREE.Audio(listener);
-    listener.gain.disconnect();
-    context = listener.context;
-    source = context.createMediaStreamSource(stream);
-    mic.setNodeSource(source);
-    sourceOutput = context.createMediaStreamDestination();
-    mic.connect(sourceOutput);
+  audio.addEventListener("loadeddata", () => {
+    console.log("ready for data analysis");
+    audioStream = new THREE.PositionalAudio(listener);
+    audioStream.setMediaElementSource(audio);
+    audioStream.setVolume(1);
+    scene.add(audioStream);
 
     fft = 128;
-    analyser = new THREE.AudioAnalyser(mic, fft);
+    analyser = new THREE.AudioAnalyser(audioStream, fft);
     dataFreq = analyser.getFrequencyData();
+    console.log(analyser);
 
     const format = renderer.capabilities.isWebGL2
       ? THREE.RedFormat
@@ -447,7 +373,12 @@ function init() {
     }
 
     animate();
-  }
+  });
+
+  // audio = document.createElement("audio");
+  // audio.setAttribute("id", "audio");
+  // audio.controls = "controls";
+  // document.body.appendChild(audio);
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.shadowMap.enabled = true;
@@ -591,3 +522,58 @@ function render() {
   prevTime = time;
   renderer.render(scene, camera);
 }
+
+socket.on("offer", (id, description) => {
+  peerConnection = new RTCPeerConnection(config);
+  peerConnection
+    .setRemoteDescription(description)
+    .then(() => peerConnection.createAnswer())
+    .then((sdp) => peerConnection.setLocalDescription(sdp))
+    .then(() => {
+      socket.emit("answer", id, peerConnection.localDescription);
+    });
+  peerConnection.ontrack = (event) => {
+    // console.log(event.streams);
+    audio.srcObject = event.streams[0];
+
+    navigator.mediaDevices
+      .getUserMedia({ audio: true, video: false })
+      .then(createElements);
+
+    function createElements() {
+      audio.play();
+      audio.muted = false;
+      console.log(audio);
+    }
+    // if (audio) {
+    //   audio.srcObject = event.streams[0];
+    // }
+    // audioStream = new MediaStream(event.streams[0]);
+    // return audioStream;
+  };
+  peerConnection.onicecandidate = (event) => {
+    if (event.candidate) {
+      socket.emit("candidate", id, event.candidate);
+    }
+  };
+});
+
+socket.on("candidate", (id, candidate) => {
+  peerConnection
+    .addIceCandidate(new RTCIceCandidate(candidate))
+    .catch((e) => console.log(ed));
+});
+
+socket.on("connect", () => {
+  socket.emit("listener is connected to server");
+});
+
+socket.on("broadcaster", () => {
+  let message = "stina says hello!";
+  socket.emit("listener", message);
+});
+
+window.onunload = window.onbeforeunload = () => {
+  socket.close();
+  peerConnection.close();
+};

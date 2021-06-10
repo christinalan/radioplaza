@@ -3,6 +3,7 @@ import * as THREE from "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/thr
 import { OrbitControls } from "https://threejsfundamentals.org/threejs/resources/threejs/r119/examples/jsm/controls/OrbitControls.js";
 import { PointerLockControls } from "https://threejsfundamentals.org/threejs/resources/threejs/r119/examples/jsm/controls/PointerLockControls.js";
 import { PositionalAudioHelper } from "https://threejsfundamentals.org/threejs/resources/threejs/r119/examples/jsm/helpers/PositionalAudioHelper.js";
+import { GUI } from "https://threejsfundamentals.org/threejs/resources/threejs/r119/examples/jsm/libs/dat.gui.module.js";
 
 //using pointer control example from https://github.com/mrdoob/three.js/blob/master/examples/misc_controls_pointerlock.html
 
@@ -448,6 +449,9 @@ function init() {
 
     animate();
   }
+
+  const gui = new GUI();
+  const imageFolder = gui.addFolder("User");
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.shadowMap.enabled = true;

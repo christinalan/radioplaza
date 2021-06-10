@@ -85,10 +85,8 @@ function getStream() {
   }
 
   const audioSource = audioSelect.value;
-  //   const videoSource = videoSelect.value;
   const constraints = {
     audio: { deviceId: audioSource ? { exact: audioSource } : undefined },
-    // video: { deviceId: videoSource ? { exact: videoSource } : undefined },
   };
   return navigator.mediaDevices
     .getUserMedia(constraints)
@@ -121,7 +119,11 @@ getConnectedDevices("audioinput", (microphones) =>
   console.log("mics found", microphones)
 );
 
+window.addEventListener("load", () => {
+  getStream().then(getDevices).then(gotDevices);
+});
+
 sendButton.addEventListener("click", async () => {
   console.log("sending audio stream");
-  getStream().then(getDevices).then(gotDevices);
+  getStream();
 });
