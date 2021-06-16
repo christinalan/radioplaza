@@ -48,28 +48,35 @@ const vertex = new THREE.Vector3();
 const color = new THREE.Color();
 
 ////animation constants
-let mic, context, source, sourceOutput;
 let analyser, data, mouse;
 let dataGeo, dataMaterial;
-let dataGeo1, dataMaterial1;
+let dat1, datm1;
 
 let datas = [];
 let datas1 = [];
 let dataTube, dataTube1;
+let geometryT, materialT, tube, tube1;
 let position, velocity1, acceleration;
 
-let texture, dataTexture;
+let texture, dataTexture, tex1, datatex1;
+let wires1 = [];
 let dataFreq;
 let fft;
+let loaded = false;
+
+audio.addEventListener("loadeddata", () => {
+  console.log("hello audio is loaded");
+  loaded = true;
+});
 
 listenButton.addEventListener("click", () => {
   console.log("fetching audio from radio page");
   // audio.play();
   // audio.muted = false;
 
-  audio.addEventListener("loadeddata", () => {
-    console.log("hello");
-  });
+  if (!loaded) {
+    alert("Radio artist has not started streaming");
+  }
 
   init();
 
@@ -197,7 +204,7 @@ function init() {
   directionalLight.shadow.mapSize.y = 1024;
 
   //floor
-  const floorGeometry = new THREE.PlaneGeometry(500, 500);
+  const floorGeometry = new THREE.PlaneGeometry(1000, 1000);
   const floorMaterial = new THREE.MeshLambertMaterial({
     color: 0xffffff,
     opacity: 0.5,
@@ -245,7 +252,7 @@ function init() {
   const colorsFloor = [];
 
   for (let i = 0, l = position.count; i < l; i++) {
-    color.setHSL(Math.random() * 0.01, 0.75, Math.random() * 0.15 + 0.2);
+    color.setHSL(Math.random() * 0.01, 0.75, Math.random() * 0.15);
     colorsFloor.push(color.r, color.g, color.b);
   }
 
@@ -257,10 +264,11 @@ function init() {
   });
 
   let wMaterial2 = new THREE.MeshBasicMaterial({
-    color: 0x7c0006,
+    color: 0x680005,
+    // color: 0x000000,
     side: THREE.DoubleSide,
     transparent: true,
-    opacity: 0.9,
+    opacity: 0.8,
   });
 
   const wall = new THREE.Mesh(wGeo, wMaterial);
@@ -276,10 +284,12 @@ function init() {
   const dMat = new THREE.MeshBasicMaterial({
     color: 0x000000,
     side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.9,
   });
 
   const door = new THREE.Mesh(dGeo, dMat);
-  door.position.set(-7.5, 5, -15);
+  door.position.set(-7.5, 5, 15);
   scene.add(door);
 
   const door2 = new THREE.Mesh(dGeo, dMat);
@@ -293,8 +303,13 @@ function init() {
 
   //right wall
   const wall4 = new THREE.Mesh(smallGeo, wMaterial2);
-  wall4.position.set(-108, 0, -110);
+  wall4.position.set(-108, 0, 0);
   scene.add(wall4);
+
+  //further right wall
+  const wall7 = new THREE.Mesh(smallGeo, wMaterial2);
+  wall7.position.set(-108, 0, 200);
+  scene.add(wall7);
 
   //ceiling
   const wall5 = new THREE.Mesh(smallGeo, wMaterial2);
@@ -322,19 +337,18 @@ function init() {
     fft = 128;
     analyser = new THREE.AudioAnalyser(audioStream, fft);
     dataFreq = analyser.getFrequencyData();
-    console.log(analyser);
 
     const format = renderer.capabilities.isWebGL2
-      ? THREE.RedFormat
-      : THREE.LuminanceAlphaFormat;
+      ? THREE.RedIntegerFormat
+      : THREE.RedFormat;
 
     const textureLoader = new THREE.TextureLoader();
-    texture = textureLoader.load("objects/images/Mpp4800.png");
+    texture = textureLoader.load("../objects/images/Mpp4800.png");
 
     dataTexture = new THREE.DataTexture(dataFreq, fft / 100, 1, format);
 
     dataGeo = new THREE.CylinderGeometry(0.5, 0.5, 20, 32);
-    dataGeo.translate(-40, 10, 0);
+    dataGeo.translate(-60, 10, 60);
     dataMaterial = new THREE.MeshLambertMaterial({
       color: 0xffffff,
       opacity: 0.5,
@@ -353,8 +367,9 @@ function init() {
       datas.push(dataTube);
     }
 
-    dataGeo1 = new THREE.SphereGeometry(0.5, 20, 32);
-    dataMaterial1 = new THREE.MeshLambertMaterial({
+    dat1 = new THREE.SphereGeometry(0.5, 20, 32);
+    dat1.translate(0, 0, -50);
+    datm1 = new THREE.MeshLambertMaterial({
       color: 0xffffff,
       opacity: 0.7,
       transparent: true,
@@ -364,7 +379,7 @@ function init() {
     });
 
     for (let i = 0; i < 500; i++) {
-      dataTube1 = new THREE.Mesh(dataGeo1, dataMaterial1);
+      dataTube1 = new THREE.Mesh(dat1, datm1);
       const s = i / 2;
       scene.add(dataTube1);
       dataTube1.position.set(Math.random(s), Math.random(s), Math.sin(s));
@@ -372,13 +387,48 @@ function init() {
       datas1.push(dataTube1);
     }
 
+    //cable salad
+    tex1 = textureLoader.load("../objects/images/russian.png");
+    datatex1 = new THREE.DataTexture(dataFreq, fft / 10, 1, format);
+
+    class CustomSinCurve extends THREE.Curve {
+      constructor(scale = 1) {
+        super();
+
+        this.scale = scale;
+      }
+
+      getPoint(t, optionalTarget = new THREE.Vector3()) {
+        const tx = t * 3 - 1.5;
+        const ty = Math.sin(Math.PI * t);
+        const tz = 0;
+
+        return optionalTarget.set(tx, ty, tz).multiplyScalar(this.scale);
+      }
+    }
+
+    const path = new CustomSinCurve(10);
+    geometryT = new THREE.TubeGeometry(path, 20, 1, 10, false);
+    geometryT.translate(50, -10, 20);
+
+    materialT = new THREE.MeshLambertMaterial({
+      color: 0xffffff,
+      opacity: 0.5,
+      transparent: true,
+      map: tex1,
+      emissive: 0xffffff,
+      emissiveMap: datatex1,
+    });
+
+    for (let i = 0; i < 2; i++) {
+      const s = (i / 2) * Math.PI;
+      tube = new THREE.Mesh(geometryT, materialT);
+      tube.position.set(s, 0, 0);
+      scene.add(tube);
+    }
+
     animate();
   });
-
-  // audio = document.createElement("audio");
-  // audio.setAttribute("id", "audio");
-  // audio.controls = "controls";
-  // document.body.appendChild(audio);
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.shadowMap.enabled = true;
@@ -409,6 +459,9 @@ function animate() {
 }
 
 let d;
+let angle = 0;
+let angleV = 0;
+let angleA = 0;
 
 function render() {
   analyser.getFrequencyData();
@@ -416,6 +469,8 @@ function render() {
   data = analyser.getFrequencyData();
 
   dataTube.material.emissiveMap.needsUpdate = true;
+  dataTube1.material.emissiveMap.needsUpdate = true;
+  tube.material.emissiveMap.needsUpdate = true;
 
   const time = performance.now();
 
@@ -475,9 +530,31 @@ function render() {
       dataTube1.position.add(velocity2);
       velocity2.add(acceleration1);
     }
-    if (total > 0) {
-      avg.divide(total);
-      velocity1 = avg;
+
+    let barHeight = data[i];
+
+    wires1[i] = new THREE.Mesh(geometryT, materialT);
+    wires1[i].position.set(barHeight - data.length * y, 0, 0);
+
+    wires1[i].scale.set(
+      (barHeight / 2 - data.length) / 5,
+      ((barHeight - data.length) / 5) * angle,
+      (barHeight / 2 - data.length) / 5
+    );
+
+    wires1[i].rotation.set(barHeight / 2, barHeight / angle, 0);
+
+    angle += Math.sin(newMap);
+    angle += angleV;
+    angleV += otherMap;
+    scene.add(wires1[i]);
+
+    while (wires1.length > 50) {
+      wires1.splice(0, 1);
+    }
+
+    for (let i = wires1.length - 1; i >= 0; i--) {
+      wires1.splice(i, 1);
     }
   }
 
@@ -561,11 +638,11 @@ socket.on("offer", (id, description) => {
 socket.on("candidate", (id, candidate) => {
   peerConnection
     .addIceCandidate(new RTCIceCandidate(candidate))
-    .catch((e) => console.log(ed));
+    .catch((e) => console.log(e));
 });
 
 socket.on("connect", () => {
-  socket.emit("listener is connected to server");
+  socket.emit("audience is connected");
 });
 
 socket.on("broadcaster", () => {

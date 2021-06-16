@@ -20,13 +20,12 @@ let tube, tube1, tube2;
 
 let geometryT, materialT, texture, dataTexture;
 
-// const startButton = document.getElementById("startButton");
-// startButton.addEventListener("click", init);
+const startButton = document.getElementById("startButton");
+startButton.addEventListener("click", init);
 
-init();
 function init() {
-  // const overlay = document.getElementById("overlay");
-  // overlay.remove();
+  const overlay = document.getElementById("overlay");
+  overlay.remove();
 
   const container = document.getElementById("container");
 

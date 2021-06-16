@@ -27,7 +27,7 @@ let broadcaster;
 io.sockets.on("error", (e) => console.log(e));
 
 io.sockets.on("connection", (socket) => {
-  console.log("radio artist connected " + socket.id);
+  console.log("client connected " + socket.id);
 
   socket.on("broadcaster", () => {
     broadcaster = socket.id;
