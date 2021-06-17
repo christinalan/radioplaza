@@ -3,8 +3,8 @@ import { createScene } from "../scene.js";
 import { setStream } from "../audio.js";
 import { createRenderer } from "../../systems/renderer.js";
 
-let audioStream, scene;
-let tMat;
+let audioStream;
+let tMat, dataTexture;
 let fft, analyser, dataAvg, data;
 let tubes = [];
 let d, avg, total;
@@ -21,20 +21,17 @@ function createTube() {
   const texture = textureLoader.load("/images/textures/3GWCDMA.png");
 
   audioStream = setStream();
-  console.log(audioStream);
-  scene = createScene();
-  scene.add(audioStream);
 
-  fft = 128;
+  fft = 256;
   analyser = new THREE.AudioAnalyser(audioStream, fft);
   const dataFreq = analyser.getFrequencyData();
   console.log(dataFreq);
 
   const format = renderer.capabilities.isWebGL2
-    ? THREE.RedIntegerFormat
-    : THREE.RedFormat;
+    ? THREE.RedFormat
+    : THREE.LuminanceFormat;
 
-  const dataTexture = new THREE.DataTexture(dataFreq, fft / 100, 1, format);
+  dataTexture = new THREE.DataTexture(dataFreq, fft / 2, 1, format);
 
   const tGeo = new THREE.CylinderGeometry(0.5, 0.5, 20, 32);
   tGeo.translate(-60, 10, 60);
@@ -42,30 +39,28 @@ function createTube() {
     opacity: 0.5,
     transparent: true,
     map: texture,
-    emissive: 0xffffff,
-    // emissiveMap: dataTexture,
+    // emissive: 0xffffff,
+    emissiveMap: dataTexture,
   });
 
   for (let i = 0; i < 50; i++) {
     const tube = new THREE.Mesh(tGeo, tMat);
     const s = i / 4;
     tube.position.set(s - 5, s + 1, s + 5);
-    tube.add(audioStream);
+    // tube.add(audioStream);
     tubes.push(tube);
   }
 
   tubes.tick = () => {
-    // tMat.emissiveMap.needsUpdate = true;
-
+    tMat.emissiveMap.needsUpdate = true;
     analyser.getFrequencyData();
     dataAvg = analyser.getAverageFrequency();
     data = analyser.getFrequencyData();
-
+    // console.log(data);
     for (let i = 0; i < data.length; i++) {
       let value = 1;
-      let v = data[i] / 512;
-      let y = (v * 300) / 5000;
-
+      let v = data[i] / 128;
+      let y = (v * 300) / 1000;
       var newMap = mapRange(value, 0, 255, 0, v);
       var otherMap = mapRange(
         value,
@@ -74,7 +69,6 @@ function createTube() {
         window.innerHeight / 5000,
         dataAvg
       );
-
       velocity = new THREE.Vector3(Math.sin(v), Math.sin(otherMap), v);
       acceleration = new THREE.Vector3(
         Math.sqrt(newMap * y + otherMap * y),
@@ -86,7 +80,6 @@ function createTube() {
         d = velocity.distanceTo(tube.position);
         avg = new THREE.Vector3();
         total = 0;
-
         if (d > 0 && d < 50) {
           avg.add(tube.position);
           total++;
@@ -94,7 +87,6 @@ function createTube() {
           velocity.multiplyScalar(-1);
           acceleration.multiplyScalar(-1);
         }
-
         tube.position.add(velocity);
         tube.scale.add(velocity);
         velocity.add(acceleration);

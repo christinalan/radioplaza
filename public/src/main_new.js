@@ -86,12 +86,14 @@ function main() {
 }
 
 audio.addEventListener("loadeddata", () => {
-  console.log("hello audio is loaded");
   loaded = true;
+  console.log("hello audio is loaded");
 });
 
 listenButton.addEventListener("click", () => {
   console.log("fetching audio from radio page");
+
+  // main();
 
   // if (audio) {
   //   main();

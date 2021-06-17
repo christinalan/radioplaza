@@ -337,13 +337,14 @@ function init() {
     fft = 128;
     analyser = new THREE.AudioAnalyser(audioStream, fft);
     dataFreq = analyser.getFrequencyData();
+    // console.log(dataFreq);
 
     const format = renderer.capabilities.isWebGL2
       ? THREE.RedIntegerFormat
       : THREE.RedFormat;
 
     const textureLoader = new THREE.TextureLoader();
-    texture = textureLoader.load("../objects/images/Mpp4800.png");
+    texture = textureLoader.load("../images/textures/Mpp4800.png");
 
     dataTexture = new THREE.DataTexture(dataFreq, fft / 100, 1, format);
 
@@ -388,7 +389,7 @@ function init() {
     }
 
     //cable salad
-    tex1 = textureLoader.load("../objects/images/russian.png");
+    tex1 = textureLoader.load("../images/textures/russian.png");
     datatex1 = new THREE.DataTexture(dataFreq, fft / 10, 1, format);
 
     class CustomSinCurve extends THREE.Curve {
@@ -466,7 +467,9 @@ let angleA = 0;
 function render() {
   analyser.getFrequencyData();
   const dataAvg = analyser.getAverageFrequency();
+
   data = analyser.getFrequencyData();
+  // console.log(data);
 
   dataTube.material.emissiveMap.needsUpdate = true;
   dataTube1.material.emissiveMap.needsUpdate = true;

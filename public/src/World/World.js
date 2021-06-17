@@ -8,8 +8,11 @@ import {
 import { createScene } from "./components/scene.js";
 import { createControls } from "./components/controls.js";
 import { createAmbient, createDirectional } from "./components/light.js";
+
 import { createTube } from "./components/animations/leaky.js";
 import { createParticle } from "./components/animations/particles.js";
+
+import { setStream } from "./components/audio.js";
 
 import { createRenderer } from "./systems/renderer.js";
 import { Resizer } from "./systems/Resizer.js";
@@ -38,6 +41,9 @@ class World {
     const walls = createMainHall();
     const doors = createDoors();
     const otherwalls = createWalls();
+
+    const audio = setStream();
+    scene.add(audio);
 
     //animations
     const tubes = createTube();
