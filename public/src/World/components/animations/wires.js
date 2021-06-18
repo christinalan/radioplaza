@@ -1,6 +1,7 @@
 import * as THREE from "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js";
 import { setStream } from "../audio.js";
 import { createRenderer } from "../../systems/renderer.js";
+import { camera } from "../../World.js";
 
 let audioStream;
 let wMat, dataTexture;
@@ -71,12 +72,57 @@ function createWire() {
     wire.rotation.set(Math.PI, 0, 0);
     // tube1.rotation.set(0, 0, Math.PI);
 
-    // scene.add(tube);
-    // scene.add(tube1);
-
     wires.push(wire);
-    // wires.push(tube1);
   }
+
+  wires.tick = () => {
+    wMat.emissiveMap.needsUpdate = true;
+
+    analyser.getFrequencyData();
+    dataAvg = analyser.getAverageFrequency();
+    data = analyser.getFrequencyData();
+
+    for (let i = 0; i < data.length; i += 3000) {
+      let value = 1;
+      var v = data[i] / 2048;
+      var y = (v * 300) / 5000;
+
+      var newMap = mapRange(value, 0, 100, 0, v);
+      var otherMap = mapRange(
+        value,
+        0,
+        1024,
+        window.innerHeight / 5000,
+        dataAvg
+      );
+
+      barHeight = data[i];
+
+      wires[i] = new THREE.Mesh(geometryT, materialT);
+      wires[i].position.set(barHeight - data.length * y, 0, 0);
+
+      wires[i].scale.set(
+        (barHeight / 2 - data.length) / 5,
+        ((barHeight - data.length) / 5) * angle,
+        (barHeight / 2 - data.length) / 5
+      );
+
+      wires[i].rotation.set(barHeight / 2, barHeight / angle, 0);
+
+      angle += Math.sin(newMap);
+      angle += angleV;
+      angleV += otherMap;
+      //   scene.add(wires[i]);
+
+      while (wires.length > 50) {
+        wires.splice(0, 1);
+      }
+
+      for (let i = wires.length - 1; i >= 0; i--) {
+        wires.splice(i, 1);
+      }
+    }
+  };
 
   return wires;
 }

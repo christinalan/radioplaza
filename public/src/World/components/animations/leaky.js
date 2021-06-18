@@ -1,7 +1,7 @@
 import * as THREE from "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js";
 import { setStream } from "../audio.js";
 import { createRenderer } from "../../systems/renderer.js";
-import { createCamera } from "../camera.js";
+import { camera, World } from "../../World.js";
 
 let audioStream;
 let tMat, dataTexture;
@@ -10,7 +10,7 @@ let tubes = [];
 let d, avg, total;
 let position, velocity, acceleration;
 
-let camera;
+// let camera;
 
 function mapRange(value, minf, maxf, mins, maxs) {
   value = (value - minf) / (maxf - minf);
@@ -52,8 +52,6 @@ function createTube() {
     tubes.push(tube);
   }
 
-  camera = createCamera();
-
   tubes.tick = () => {
     tMat.emissiveMap.needsUpdate = true;
 
@@ -88,26 +86,34 @@ function createTube() {
       avg = new THREE.Vector3();
       total = 0;
 
-      for (let tube of tubes) {
-        d = velocity.distanceTo(tube.position);
+      function startAnimation() {
+        for (let tube of tubes) {
+          let prox = camera.position.distanceTo(tube.position);
 
-        if (d > 0 && d < 50) {
-          avg.add(tube.position);
-          total++;
+          d = velocity.distanceTo(tube.position);
 
-          velocity.multiplyScalar(-1);
-          acceleration.multiplyScalar(-1);
+          if (d > 0 && d < 50) {
+            avg.add(tube.position);
+            total++;
+
+            velocity.multiplyScalar(-1);
+            acceleration.multiplyScalar(-1);
+          }
+          tube.position.add(velocity);
+          velocity.add(acceleration);
+          tube.scale.add(velocity);
+
+          tube.scale.x += Math.sin(y) * 1;
+          tube.rotation.y += Math.sin(y) * 0.001;
         }
-        tube.position.add(velocity);
-        velocity.add(acceleration);
-        tube.scale.add(velocity);
-
-        tube.scale.x += Math.sin(y) * 1;
-        tube.rotation.y += Math.sin(y) * 0.001;
+        if (total > 0) {
+          avg.divide(total);
+          velocity = avg;
+        }
       }
-      if (total > 0) {
-        avg.divide(total);
-        velocity = avg;
+
+      if (camera.position.x > -60 || camera.position.x < 0) {
+        startAnimation();
       }
     }
   };
