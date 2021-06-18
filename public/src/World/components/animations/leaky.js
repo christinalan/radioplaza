@@ -20,7 +20,7 @@ function mapRange(value, minf, maxf, mins, maxs) {
 function createTube() {
   const renderer = createRenderer();
   const textureLoader = new THREE.TextureLoader();
-  const texture = textureLoader.load("/images/textures/3GWCDMA.png");
+  const texture = textureLoader.load("/images/textures/texture.jpeg");
 
   audioStream = setStream();
 
@@ -32,15 +32,14 @@ function createTube() {
     ? THREE.RedFormat
     : THREE.LuminanceFormat;
 
-  dataTexture = new THREE.DataTexture(dataFreq, fft / 2, 1, format);
+  dataTexture = new THREE.DataTexture(dataFreq, fft / 2, 1, THREE.RedFormat);
 
   const tGeo = new THREE.CylinderGeometry(0.5, 0.5, 20, 32);
   tGeo.translate(-50, 10, 30);
   tMat = new THREE.MeshLambertMaterial({
-    opacity: 0.5,
+    opacity: 0.9,
     transparent: true,
     map: texture,
-    emissive: 0xffffff,
     emissiveMap: dataTexture,
   });
 

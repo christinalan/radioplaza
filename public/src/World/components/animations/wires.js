@@ -1,16 +1,13 @@
 import * as THREE from "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js";
 import { setStream } from "../audio.js";
 import { createRenderer } from "../../systems/renderer.js";
-import { camera } from "../../World.js";
 
 let audioStream;
 let wGeo, wMat, dataTexture;
 let fft, analyser, dataAvg, data;
 let wire;
 let wires = [];
-let wires1 = [];
-let d, avg, total;
-let position, velocity, acceleration;
+let newwires = [];
 
 function mapRange(value, minf, maxf, mins, maxs) {
   value = (value - minf) / (maxf - minf);
@@ -52,20 +49,21 @@ function createWire() {
 
   const path = new CustomSinCurve(10);
   wGeo = new THREE.TubeGeometry(path, 20, 1, 10, false);
-  wGeo.translate(60, 10, 30);
+  wGeo.translate(-20, 0, 0);
   wMat = new THREE.MeshLambertMaterial({
     color: 0xffffff,
-    opacity: 0.3,
+    opacity: 0.8,
     transparent: true,
     map: texture,
     emissive: 0xffffff,
     emissiveMap: dataTexture,
   });
 
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 30; i++) {
     const s = (i / 2) * Math.PI;
     wire = new THREE.Mesh(wGeo, wMat);
-    wire.position.set(0, s, 0);
+    wire.position.set(0, 0, s);
+    wire.add(audioStream);
 
     // wire = new THREE.Mesh(wGeo, wMat);
     // tube1.position.set(s, 0, s);
@@ -99,26 +97,37 @@ function createWire() {
         window.innerHeight / 5000,
         dataAvg
       );
+      let barHeight = data[i];
 
-      const barHeight = data[i];
+      for (let wire of wires) {
+        wire.scale.set(
+          (barHeight / 2 - data.length) / 5,
+          ((barHeight - data.length) / 5) * angle,
+          (barHeight / 2 - data.length) / 5
+        );
+        // wire.rotation.set(barHeight / 2, barHeight / angle, 0);
+        angle += Math.sin(newMap);
+        angle += angleV;
+        angleV += otherMap;
+      }
 
-      wires1[i] = new THREE.Mesh(wGeo, wMat);
-      wires1[i].position.set(barHeight - data.length * y, 0, 0);
+      wires[i] = new THREE.Mesh(wGeo, wMat);
+      wires[i].position.set(barHeight - data.length * y, 0, 0);
+      wires[i].add(audioStream);
 
-      wires1[i].scale.set(
+      wires[i].scale.set(
         (barHeight / 2 - data.length) / 5,
         ((barHeight - data.length) / 5) * angle,
         (barHeight / 2 - data.length) / 5
       );
 
-      wires1[i].rotation.set(barHeight / 2, barHeight / angle, 0);
+      wires[i].rotation.set(barHeight / 2, barHeight / angle, 0);
 
       angle += Math.sin(newMap);
       angle += angleV;
       angleV += otherMap;
-      //   scene.add(wires[i]);
 
-      wires.push(wires1);
+      //   wires.concat(newwires);
 
       while (wires.length > 50) {
         wires.splice(0, 1);
