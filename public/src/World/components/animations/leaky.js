@@ -1,6 +1,7 @@
 import * as THREE from "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js";
 import { setStream } from "../audio.js";
 import { createRenderer } from "../../systems/renderer.js";
+import { createCamera } from "../camera.js";
 
 let audioStream;
 let tMat, dataTexture;
@@ -8,6 +9,8 @@ let fft, analyser, dataAvg, data;
 let tubes = [];
 let d, avg, total;
 let position, velocity, acceleration;
+
+let camera;
 
 function mapRange(value, minf, maxf, mins, maxs) {
   value = (value - minf) / (maxf - minf);
@@ -24,7 +27,6 @@ function createTube() {
   fft = 128;
   analyser = new THREE.AudioAnalyser(audioStream, fft);
   const dataFreq = analyser.getFrequencyData();
-  console.log(dataFreq);
 
   const format = renderer.capabilities.isWebGL2
     ? THREE.RedFormat
@@ -33,12 +35,12 @@ function createTube() {
   dataTexture = new THREE.DataTexture(dataFreq, fft / 2, 1, format);
 
   const tGeo = new THREE.CylinderGeometry(0.5, 0.5, 20, 32);
-  tGeo.translate(-60, 10, 60);
+  tGeo.translate(-50, 10, 30);
   tMat = new THREE.MeshLambertMaterial({
     opacity: 0.5,
     transparent: true,
     map: texture,
-    // emissive: 0xffffff,
+    emissive: 0xffffff,
     emissiveMap: dataTexture,
   });
 
@@ -49,6 +51,8 @@ function createTube() {
     tube.add(audioStream);
     tubes.push(tube);
   }
+
+  camera = createCamera();
 
   tubes.tick = () => {
     tMat.emissiveMap.needsUpdate = true;

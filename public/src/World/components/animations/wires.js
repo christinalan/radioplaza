@@ -25,7 +25,6 @@ function createWire() {
   fft = 128;
   analyser = new THREE.AudioAnalyser(audioStream, fft);
   const dataFreq = analyser.getFrequencyData();
-  console.log(dataFreq);
 
   const format = renderer.capabilities.isWebGL2
     ? THREE.RedFormat

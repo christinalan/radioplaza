@@ -51,7 +51,9 @@ class World {
     const particles = createParticle();
     const wires = createWire();
 
-    loop.updatables.push(controls, tubes, particles);
+    loop.updatables.push(camera, controls, tubes);
+
+    console.log(camera);
 
     scene.add(ambientL, dirL, floor);
     scene.add(walls[0], walls[1], doors[0], doors[1]);
