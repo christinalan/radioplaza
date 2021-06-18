@@ -11,6 +11,7 @@ import { createAmbient, createDirectional } from "./components/light.js";
 
 import { createTube } from "./components/animations/leaky.js";
 import { createParticle } from "./components/animations/particles.js";
+import { createWire } from "./components/animations/wires.js";
 
 import { setStream } from "./components/audio.js";
 
@@ -48,8 +49,9 @@ class World {
     //animations
     const tubes = createTube();
     const particles = createParticle();
+    const wires = createWire();
 
-    loop.updatables.push(controls, tubes);
+    loop.updatables.push(controls, tubes, particles);
 
     scene.add(ambientL, dirL, floor);
     scene.add(walls[0], walls[1], doors[0], doors[1]);
@@ -64,6 +66,10 @@ class World {
 
     for (let i = 0; i < particles.length; i++) {
       scene.add(particles[i]);
+    }
+
+    for (let i = 0; i < wires.length; i++) {
+      scene.add(wires[i]);
     }
 
     const resizer = new Resizer(container, camera, renderer);

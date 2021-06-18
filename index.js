@@ -39,6 +39,11 @@ io.sockets.on("connection", (socket) => {
     socket.to(broadcaster).emit("listener", socket.id);
   });
 
+  socket.on("msg", (data) => {
+    console.log(data);
+    socket.to(broadcaster).emit("msg", data);
+  });
+
   socket.on("offer", (id, message) => {
     socket.to(id).emit("offer", socket.id, message);
   });

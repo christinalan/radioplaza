@@ -17,8 +17,15 @@ let audioSelect = document.querySelector("select#audioSource");
 let sendButton = document.getElementById("send");
 
 let socket = io();
+
 socket.on("connect", () => {
   console.log("radio artist connected");
+});
+
+socket.on("msg", (data) => {
+  console.log(data);
+
+  alert("User has pressed start, send Stream again");
 });
 
 socket.on("answer", (id, description) => {

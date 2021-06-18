@@ -2,6 +2,7 @@ import { World } from "./World/World.js";
 
 let peerConnection;
 let loaded = false;
+let startPressed = false;
 
 const config = {
   iceServers: [
@@ -59,6 +60,7 @@ socket.on("candidate", (id, candidate) => {
 });
 
 socket.on("connect", () => {
+  console.log("audience is connected");
   socket.emit("audience is connected");
 });
 
@@ -92,6 +94,9 @@ audio.addEventListener("loadeddata", () => {
 
 listenButton.addEventListener("click", () => {
   console.log("fetching audio from radio page");
+  startPressed = true;
+
+  socket.emit("msg", startPressed);
 
   // main();
 

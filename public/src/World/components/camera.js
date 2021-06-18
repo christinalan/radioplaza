@@ -4,6 +4,10 @@ function createCamera() {
   const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
   camera.position.set(0, 0, 10);
 
+  // camera.tick = () => {
+  //   console.log(camera.position);
+  // };
+
   return camera;
 }
 
