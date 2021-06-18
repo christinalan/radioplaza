@@ -4,10 +4,11 @@ import { createRenderer } from "../../systems/renderer.js";
 import { camera } from "../../World.js";
 
 let audioStream;
-let wMat, dataTexture;
+let wGeo, wMat, dataTexture;
 let fft, analyser, dataAvg, data;
 let wire;
 let wires = [];
+let wires1 = [];
 let d, avg, total;
 let position, velocity, acceleration;
 
@@ -50,7 +51,7 @@ function createWire() {
   }
 
   const path = new CustomSinCurve(10);
-  const wGeo = new THREE.TubeGeometry(path, 20, 1, 10, false);
+  wGeo = new THREE.TubeGeometry(path, 20, 1, 10, false);
   wGeo.translate(60, 10, 30);
   wMat = new THREE.MeshLambertMaterial({
     color: 0xffffff,
@@ -83,6 +84,9 @@ function createWire() {
     data = analyser.getFrequencyData();
 
     for (let i = 0; i < data.length; i += 3000) {
+      let angle = 0;
+      let angleV = 0;
+
       let value = 1;
       var v = data[i] / 2048;
       var y = (v * 300) / 5000;
@@ -96,23 +100,25 @@ function createWire() {
         dataAvg
       );
 
-      barHeight = data[i];
+      const barHeight = data[i];
 
-      wires[i] = new THREE.Mesh(geometryT, materialT);
-      wires[i].position.set(barHeight - data.length * y, 0, 0);
+      wires1[i] = new THREE.Mesh(wGeo, wMat);
+      wires1[i].position.set(barHeight - data.length * y, 0, 0);
 
-      wires[i].scale.set(
+      wires1[i].scale.set(
         (barHeight / 2 - data.length) / 5,
         ((barHeight - data.length) / 5) * angle,
         (barHeight / 2 - data.length) / 5
       );
 
-      wires[i].rotation.set(barHeight / 2, barHeight / angle, 0);
+      wires1[i].rotation.set(barHeight / 2, barHeight / angle, 0);
 
       angle += Math.sin(newMap);
       angle += angleV;
       angleV += otherMap;
       //   scene.add(wires[i]);
+
+      wires.push(wires1);
 
       while (wires.length > 50) {
         wires.splice(0, 1);
