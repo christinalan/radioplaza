@@ -44,7 +44,7 @@ function createMainHall() {
   const colorsFloor = [];
 
   for (let i = 0, l = position.count; i < l; i++) {
-    color.setHSL(Math.random() * 0.01, 0.75, Math.random() * 0.15 + 0.01);
+    color.setHSL(Math.random(), 0.75, Math.random() * 0.15 + 0.01);
     colorsFloor.push(color.r, color.g, color.b);
   }
 

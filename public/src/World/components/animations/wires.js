@@ -1,13 +1,13 @@
 import * as THREE from "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js";
 import { setStream } from "../audio.js";
 import { createRenderer } from "../../systems/renderer.js";
+import { scene } from "../../World.js";
 
 let audioStream;
 let wGeo, wMat, dataTexture;
 let fft, analyser, dataAvg, data;
 let wire;
 let wires = [];
-let newwires = [];
 
 function mapRange(value, minf, maxf, mins, maxs) {
   value = (value - minf) / (maxf - minf);
@@ -17,19 +17,19 @@ function mapRange(value, minf, maxf, mins, maxs) {
 function createWire() {
   const renderer = createRenderer();
   const textureLoader = new THREE.TextureLoader();
-  const texture = textureLoader.load("/images/textures/russian.png");
+  const texture = textureLoader.load("/images/textures/Contestiathmb.png");
 
   audioStream = setStream();
 
-  fft = 128;
+  fft = 32;
   analyser = new THREE.AudioAnalyser(audioStream, fft);
-  const dataFreq = analyser.getFrequencyData();
+  data = analyser.getFrequencyData();
 
   const format = renderer.capabilities.isWebGL2
     ? THREE.RedFormat
     : THREE.LuminanceFormat;
 
-  dataTexture = new THREE.DataTexture(dataFreq, fft / 2, 1, format);
+  dataTexture = new THREE.DataTexture(data, fft / 2, 1, THREE.LuminanceFormat);
 
   class CustomSinCurve extends THREE.Curve {
     constructor(scale = 1) {
@@ -49,7 +49,7 @@ function createWire() {
 
   const path = new CustomSinCurve(10);
   wGeo = new THREE.TubeGeometry(path, 20, 1, 10, false);
-  wGeo.translate(-20, 0, 0);
+  wGeo.translate(50, -20, 10);
   wMat = new THREE.MeshLambertMaterial({
     color: 0xffffff,
     opacity: 0.8,
@@ -62,17 +62,20 @@ function createWire() {
   for (let i = 0; i < 30; i++) {
     const s = (i / 2) * Math.PI;
     wire = new THREE.Mesh(wGeo, wMat);
-    wire.position.set(0, 0, s);
-    wire.add(audioStream);
+    wire.position.set(s, 0, s);
+    // wire.add(audioStream);
 
     // wire = new THREE.Mesh(wGeo, wMat);
     // tube1.position.set(s, 0, s);
 
     wire.rotation.set(Math.PI, 0, 0);
+    scene.add(wire);
     // tube1.rotation.set(0, 0, Math.PI);
 
-    wires.push(wire);
+    // wires.push(wire);
   }
+
+  scene.background = new THREE.Color("blue");
 
   wires.tick = () => {
     wMat.emissiveMap.needsUpdate = true;
@@ -99,21 +102,9 @@ function createWire() {
       );
       let barHeight = data[i];
 
-      for (let wire of wires) {
-        wire.scale.set(
-          (barHeight / 2 - data.length) / 5,
-          ((barHeight - data.length) / 5) * angle,
-          (barHeight / 2 - data.length) / 5
-        );
-        // wire.rotation.set(barHeight / 2, barHeight / angle, 0);
-        angle += Math.sin(newMap);
-        angle += angleV;
-        angleV += otherMap;
-      }
-
       wires[i] = new THREE.Mesh(wGeo, wMat);
       wires[i].position.set(barHeight - data.length * y, 0, 0);
-      wires[i].add(audioStream);
+      //   wires[i].add(audioStream);
 
       wires[i].scale.set(
         (barHeight / 2 - data.length) / 5,
@@ -126,6 +117,8 @@ function createWire() {
       angle += Math.sin(newMap);
       angle += angleV;
       angleV += otherMap;
+
+      scene.add(wires[i]);
 
       //   wires.concat(newwires);
 

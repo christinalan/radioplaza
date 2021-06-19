@@ -89,4 +89,4 @@ class World {
   }
 }
 
-export { World, camera };
+export { World, camera, scene };
