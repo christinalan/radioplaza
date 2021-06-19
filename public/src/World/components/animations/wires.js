@@ -8,6 +8,7 @@ let wGeo, wMat, dataTexture;
 let fft, analyser, dataAvg, data;
 let wire;
 let wires = [];
+let wires1 = [];
 
 function mapRange(value, minf, maxf, mins, maxs) {
   value = (value - minf) / (maxf - minf);
@@ -51,25 +52,24 @@ function createWire() {
   wGeo = new THREE.TubeGeometry(path, 20, 1, 10, false);
   wGeo.translate(50, -20, 10);
   wMat = new THREE.MeshLambertMaterial({
-    color: 0xffffff,
-    opacity: 0.8,
-    transparent: true,
+    // color: 0xffffff,
+    // opacity: 0.8,
+    // transparent: true,
     map: texture,
     emissive: 0xffffff,
     emissiveMap: dataTexture,
   });
 
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < 10; i++) {
     const s = (i / 2) * Math.PI;
     wire = new THREE.Mesh(wGeo, wMat);
-    wire.position.set(s, 0, s);
+    wire.position.set(0, s, s);
     // wire.add(audioStream);
 
     // wire = new THREE.Mesh(wGeo, wMat);
     // tube1.position.set(s, 0, s);
 
     wire.rotation.set(Math.PI, 0, 0);
-    scene.add(wire);
     // tube1.rotation.set(0, 0, Math.PI);
 
     // wires.push(wire);
@@ -84,12 +84,12 @@ function createWire() {
     dataAvg = analyser.getAverageFrequency();
     data = analyser.getFrequencyData();
 
-    for (let i = 0; i < data.length; i += 3000) {
+    for (let i = 0; i < data.length; i += 1000) {
       let angle = 0;
       let angleV = 0;
 
       let value = 1;
-      var v = data[i] / 2048;
+      var v = data[i] / 512;
       var y = (v * 300) / 5000;
 
       var newMap = mapRange(value, 0, 100, 0, v);
@@ -118,17 +118,17 @@ function createWire() {
       angle += angleV;
       angleV += otherMap;
 
-      scene.add(wires[i]);
+      //   scene.add(wires[i]);
 
       //   wires.concat(newwires);
 
-      while (wires.length > 50) {
-        wires.splice(0, 1);
-      }
+      //   while (wires.length > 50) {
+      //     wires.splice(0, 1);
+      //   }
 
-      for (let i = wires.length - 1; i >= 0; i--) {
-        wires.splice(i, 1);
-      }
+      //   for (let i = wires.length - 1; i >= 0; i--) {
+      //     wires.splice(i, 1);
+      //   }
     }
   };
 
