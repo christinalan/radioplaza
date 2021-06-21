@@ -28,7 +28,6 @@ let loop;
 let allobjects = [];
 
 class World {
-  // 1. Create an instance of the World app
   constructor(container) {
     camera = createCamera();
     scene = createScene();
