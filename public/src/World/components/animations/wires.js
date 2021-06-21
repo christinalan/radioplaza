@@ -2,6 +2,7 @@ import * as THREE from "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/thr
 import { setStream } from "../audio.js";
 import { createRenderer } from "../../systems/renderer.js";
 import { scene } from "../../World.js";
+import { camera } from "../../World.js";
 
 let audioStream;
 let wGeo, wMat, wMat1, dataTexture;
@@ -27,7 +28,7 @@ function createWire() {
   data = analyser.getFrequencyData();
 
   const format = renderer.capabilities.isWebGL2
-    ? THREE.RedFormat
+    ? THREE.RGBFormat
     : THREE.LuminanceFormat;
 
   dataTexture = new THREE.DataTexture(data, fft / 100, 1, format);
@@ -50,7 +51,7 @@ function createWire() {
 
   const path = new CustomSinCurve(10);
   wGeo = new THREE.TubeGeometry(path, 20, 1, 10, false);
-  wGeo.translate(50, -20, 10);
+  wGeo.translate(90, -20, 20);
   wMat = new THREE.MeshLambertMaterial({
     // color: 0xffffff,
     // opacity: 0.8,
@@ -65,9 +66,7 @@ function createWire() {
     const s = (i / 2) * Math.PI;
     wire = new THREE.Mesh(wGeo, wMat);
     wire.position.set(0, s, s);
-
     wire.rotation.set(Math.PI, 0, 0);
-    // tube1.rotation.set(0, 0, Math.PI);
 
     // wires.push(wire);
   }
@@ -81,7 +80,7 @@ function createWire() {
     dataAvg = analyser.getAverageFrequency();
     data = analyser.getFrequencyData();
 
-    for (let i = 0; i < data.length; i += 1000) {
+    for (let i = 0; i < data.length; i += 3000) {
       let angle = 0;
       let angleV = 0;
 
@@ -108,12 +107,12 @@ function createWire() {
         wire.scale.set(
           (barHeight / 2 - data.length) / 5,
           Math.sin(otherMap),
-          v
+          barHeight / 2 - data.length
         );
         // wire.rotation.set(barHeight / 2, barHeight, angle);
         // wire.position.y += angle;
         // wire.scale.set(Math.sin(v), Math.sin(otherMap), v);
-        // wire.scale.y += Math.sin(y);
+        wire.scale.y += Math.sin(y);
         // wire.scale.x += angle;
         angle += Math.sin(newMap) * angleV;
         angleV += otherMap;
@@ -122,23 +121,34 @@ function createWire() {
       wires1[i] = new THREE.Mesh(wGeo, wMat);
       wires1[i].position.set(barHeight - data.length * y, 0, 0);
 
-      //   wires1[i].scale.set(
-      //     (barHeight / 2 - data.length) / 5,
-      //     ((barHeight - data.length) / 5) * angle,
-      //     (barHeight / 2 - data.length) / 5
-      //   );
-      wires1[i].scale.set(Math.sin(v), Math.sin(otherMap), v);
+      wires1[i].scale.set(
+        (barHeight / 2 - data.length) / 5,
+        ((barHeight - data.length) / 5) * angle,
+        (barHeight / 2 - data.length) / 5
+      );
+
+      // wires1[i].scale.set(Math.sin(v), Math.sin(otherMap), v);
 
       wires1[i].rotation.set(barHeight / 2, barHeight / angle, 0);
 
       wires1[i].scale.y += v;
       angle += Math.sin(newMap);
-      //   angle += angleV;
-      //   angleV += otherMap;
+      // angle += angleV;
+      // angleV += otherMap;
 
-      scene.add(wires1[i]);
+      // const remobject = scene.getObjectByProperty(
+      //   "2C4E9E90-9395-4001-8B1F-705973F71EDD"
+      // );
 
-      wires.push(wires1[i]);
+      if (camera.position.x > 70 && camera.position.x < 110) {
+        scene.add(wires1[i]);
+
+        wires.push(wires1[i]);
+      } else {
+        wires1[i].geometry.dispose();
+        wires1[i].material.dispose();
+        scene.remove(wires1[i]);
+      }
 
       while (wires1.length > 25) {
         wires1.splice(0, 1);
@@ -146,10 +156,6 @@ function createWire() {
 
       for (let i = wires1.length - 1; i >= 0; i--) {
         wires1.splice(i, 1);
-      }
-
-      while (wires.length > 50) {
-        wires.splice(0, 1);
       }
     }
   };

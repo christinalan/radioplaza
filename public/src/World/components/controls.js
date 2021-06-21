@@ -1,7 +1,8 @@
 import * as THREE from "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js";
 import { PointerLockControls } from "https://threejsfundamentals.org/threejs/resources/threejs/r119/examples/jsm/controls/PointerLockControls.js";
+import { allobjects } from "../World.js";
 
-const objects = [];
+let objects = [];
 let raycaster;
 
 let moveForward = false;
@@ -106,6 +107,8 @@ function createControls(camera, canvas) {
   document.addEventListener("keyup", onKeyUp);
 
   controls.tick = () => {
+    // objects.push(allobjects);
+
     const time = performance.now();
     if (controls.isLocked == true) {
       //   console.log("hello tick activated for controls");
@@ -116,6 +119,7 @@ function createControls(camera, canvas) {
       const intersections = raycaster.intersectObjects(objects);
 
       const onObject = intersections.length > 0;
+
       const delta = (time - prevTime) / 1000;
 
       velocity.x -= velocity.x * 10.0 * delta;

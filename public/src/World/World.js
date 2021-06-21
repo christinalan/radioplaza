@@ -12,6 +12,8 @@ import { createAmbient, createDirectional } from "./components/light.js";
 import { createTube } from "./components/animations/leaky.js";
 import { createParticle } from "./components/animations/particles.js";
 import { createWire } from "./components/animations/wires.js";
+import { createStar } from "./components/animations/stars.js";
+// import { createCube } from "./components/animations/cubes.js";
 
 import { setStream } from "./components/audio.js";
 
@@ -23,6 +25,7 @@ let camera;
 let renderer;
 let scene;
 let loop;
+let allobjects = [];
 
 class World {
   // 1. Create an instance of the World app
@@ -50,11 +53,17 @@ class World {
     const tubes = createTube();
     const particles = createParticle();
     const wires = createWire();
+    const stars = createStar();
+    // const cubes = createCube();
 
-    loop.updatables.push(camera, controls, tubes, particles, wires);
+    loop.updatables.push(camera, controls, tubes, particles, wires, stars);
 
     scene.add(ambientL, dirL, floor);
-    scene.add(walls[0], walls[1], doors[0], doors[1]);
+    scene.add(walls[0], walls[1]);
+
+    for (let i = 0; i < doors.length; i++) {
+      scene.add(doors[i]);
+    }
 
     for (let i = 0; i < otherwalls.length; i++) {
       scene.add(otherwalls[i]);
@@ -70,7 +79,25 @@ class World {
 
     for (let i = 0; i < wires.length; i++) {
       scene.add(wires[i]);
+
+      while (wires.length > 50) {
+        wires.splice(0, 1);
+      }
+
+      for (let i = wires1.length - 1; i >= 0; i--) {
+        wires.splice(i, 1);
+        wires.remove(i);
+      }
     }
+
+    for (let i = 0; i < stars.length; i++) {
+      scene.add(stars[i]);
+    }
+
+    // for (let i = 0; i < cubes.length; i++) {
+    //   scene.add(cubes[i]);
+    //   allobjects.push(cubes[i]);
+    // }
 
     const resizer = new Resizer(container, camera, renderer);
   }

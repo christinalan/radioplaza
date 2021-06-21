@@ -83,36 +83,54 @@ function createDoors() {
   const door1 = new THREE.Mesh(dGeo, dMat);
   door1.position.set(-11.5, 15, -140);
 
-  doors.push(door, door1);
+  const door2 = new THREE.Mesh(dGeo, dMat);
+  door2.position.set(8.5, 15, -20);
+
+  const door3 = new THREE.Mesh(dGeo, dMat);
+  door3.position.set(8.5, 15, -140);
+
+  doors.push(door, door1, door2, door3);
   return doors;
 }
 
 function createWalls() {
   const otherwalls = [];
-  const smallGeo = new THREE.PlaneGeometry(150, 250);
+  const smallGeo = new THREE.PlaneGeometry(400, 250);
 
   const wMat = new THREE.MeshBasicMaterial({
-    // color: 0x6800005,
-    color: 0xffffff,
+    color: 0x6800005,
+    // color: 0xffffff,
     side: THREE.DoubleSide,
     transparent: true,
-    opacity: 0.2,
+    opacity: 0.9,
   });
 
   //left wall
   const wall = new THREE.Mesh(smallGeo, wMat);
-  wall.position.set(-90, 50, 100);
+  wall.position.set(-212, 50, 100);
 
   //2nd wall to the right
   const wall1 = new THREE.Mesh(smallGeo, wMat);
-  wall1.position.set(-90, 50, -110);
+  wall1.position.set(-212, 50, -110);
 
   //ceiling ?
   const ceiling = new THREE.Mesh(smallGeo, wMat);
-  ceiling.position.set(-90, 150, 0);
+  ceiling.position.set(-212, 150, 0);
   ceiling.rotation.set(Math.PI / 2, 0, 0);
 
-  otherwalls.push(wall, wall1, ceiling);
+  //right side walls
+  const wall2 = new THREE.Mesh(smallGeo, wMat);
+  wall2.position.set(210, 50, 100);
+
+  const wall3 = new THREE.Mesh(smallGeo, wMat);
+  wall3.position.set(210, 50, -110);
+
+  //ceiling
+  const ceiling1 = new THREE.Mesh(smallGeo, wMat);
+  ceiling1.position.set(209, 150, 0);
+  ceiling1.rotation.set(Math.PI / 2, 0, 0);
+
+  otherwalls.push(wall, wall1, ceiling, wall2, wall3, ceiling1);
 
   return otherwalls;
 }
