@@ -15,10 +15,36 @@ const config = {
 //configuring audio for listener
 let audio = document.getElementById("audio");
 
+let source = document.getElementById("location");
+let freq = document.getElementById("frequency");
+let equip = document.getElementById("equip");
+
+let radioInfo = document.getElementById("radio-info");
+
 let socket = io();
 
 socket.on("connect", () => {
   console.log("listener connected");
+
+  socket.on("msgObj", (data) => {
+    let msgEl = document.createElement("p");
+    let msgEl1 = document.createElement("p");
+    let msgEl2 = document.createElement("p");
+
+    console.log(data);
+    let sourcemsg = data.source;
+    msgEl.innerHTML = sourcemsg;
+
+    let freqmsg = data.freq;
+    msgEl1.innerHTML = freqmsg;
+
+    let equipmsg = data.equip;
+    msgEl2.innerHTML = equipmsg;
+
+    source.appendChild(msgEl);
+    freq.appendChild(msgEl1);
+    equip.appendChild(msgEl2);
+  });
 });
 
 socket.on("offer", (id, description) => {
@@ -61,7 +87,6 @@ socket.on("candidate", (id, candidate) => {
 
 socket.on("connect", () => {
   console.log("audience is connected");
-  socket.emit("audience is connected");
 });
 
 socket.on("broadcaster", () => {
@@ -97,6 +122,8 @@ listenButton.addEventListener("click", () => {
   startPressed = true;
 
   socket.emit("msg", startPressed);
+
+  radioInfo.style.display = "block";
 
   // main();
 

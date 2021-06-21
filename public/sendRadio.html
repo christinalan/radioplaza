@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <link href="css/radio.css" rel="stylesheet" />
+    <title>Radio Stream</title>
   </head>
   <body>
     <section class="select">
@@ -15,6 +16,29 @@
     </section>
 
     <div id="overlay" style="margin: 0 auto">
+      <p>
+        Streaming From:
+        <input
+          class="input"
+          id="location"
+          type="text"
+          placeholder="Enter Location"
+        />
+        Frequency Broadcasted:
+        <input
+          class="input"
+          id="frequency"
+          type="text"
+          placeholder="Enter Frequency"
+        />
+        Equipment Used:
+        <input
+          class="input"
+          id="equipment"
+          type="text"
+          placeholder="Enter SDR, hardware, antennas, etc."
+        />
+      </p>
       <button id="send" style="margin-top: 10px">Stream</button>
     </div>
     <script src="/socket.io/socket.io.js"></script>

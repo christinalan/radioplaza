@@ -40,8 +40,14 @@ io.sockets.on("connection", (socket) => {
   });
 
   socket.on("msg", (data) => {
-    console.log(data);
-    socket.to(broadcaster).emit("msg", data);
+    // console.log(data);
+    let msgObj = {
+      source: data.source,
+      freq: data.freq,
+      equip: data.equip,
+    };
+    console.log(msgObj);
+    socket.broadcast.emit("msgObj", msgObj);
   });
 
   socket.on("offer", (id, message) => {

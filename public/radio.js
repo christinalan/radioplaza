@@ -16,6 +16,10 @@ let audioElement = document.getElementById("webrtc");
 let audioSelect = document.querySelector("select#audioSource");
 let sendButton = document.getElementById("send");
 
+let streamSource = document.getElementById("location");
+let freqSource = document.getElementById("frequency");
+let equipSource = document.getElementById("equipment");
+
 let socket = io();
 
 socket.on("connect", () => {
@@ -23,8 +27,6 @@ socket.on("connect", () => {
 });
 
 socket.on("msg", (data) => {
-  console.log(data);
-
   alert("User has pressed start, send Stream again");
 });
 
@@ -133,4 +135,17 @@ window.addEventListener("load", () => {
 sendButton.addEventListener("click", async () => {
   console.log("sending audio stream");
   getStream();
+
+  let source = streamSource.value;
+  let freq = freqSource.value;
+  let equip = equipSource.value;
+
+  console.log(source, freq, equip);
+
+  let msg = {
+    source: source,
+    freq: freq,
+    equip: equip,
+  };
+  socket.emit("msg", msg);
 });
