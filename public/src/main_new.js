@@ -3,6 +3,8 @@ import { World } from "./World/World.js";
 let peerConnection;
 let loaded = false;
 let startPressed = false;
+let msgEl, msgEl1, msgEl2;
+let sourcemsg, freqmsg, equipmsg;
 
 const config = {
   iceServers: [
@@ -27,18 +29,20 @@ socket.on("connect", () => {
   console.log("listener connected");
 
   socket.on("msgObj", (data) => {
-    let msgEl = document.createElement("p");
-    let msgEl1 = document.createElement("p");
-    let msgEl2 = document.createElement("p");
+    source.innerHTML = "";
+    freq.innerHTML = "";
+    equip.innerHTML = "";
+    msgEl = document.createElement("p");
+    msgEl1 = document.createElement("p");
+    msgEl2 = document.createElement("p");
 
-    console.log(data);
-    let sourcemsg = data.source;
+    sourcemsg = data.source;
     msgEl.innerHTML = sourcemsg;
 
-    let freqmsg = data.freq;
+    freqmsg = data.freq;
     msgEl1.innerHTML = freqmsg;
 
-    let equipmsg = data.equip;
+    equipmsg = data.equip;
     msgEl2.innerHTML = equipmsg;
 
     source.appendChild(msgEl);
@@ -124,8 +128,9 @@ listenButton.addEventListener("click", () => {
   socket.emit("msg", startPressed);
 
   radioInfo.style.display = "block";
-
-  // main();
+  msgEl.innerHTML = "";
+  msgEl1.innerHTML = "";
+  msgEl2.innerHTML = "";
 
   // if (audio) {
   //   main();

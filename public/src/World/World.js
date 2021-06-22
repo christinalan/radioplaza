@@ -55,7 +55,15 @@ class World {
     const stars = createStar();
     // const cubes = createCube();
 
-    loop.updatables.push(camera, controls, tubes, particles, wires, stars);
+    loop.updatables.push(
+      camera,
+      scene,
+      controls,
+      tubes,
+      particles,
+      wires,
+      stars
+    );
 
     scene.add(ambientL, dirL, floor);
     scene.add(walls[0], walls[1]);
@@ -83,7 +91,7 @@ class World {
         wires.splice(0, 1);
       }
 
-      for (let i = wires1.length - 1; i >= 0; i--) {
+      for (let i = wires.length - 1; i >= 0; i--) {
         wires.splice(i, 1);
         wires.remove(i);
       }

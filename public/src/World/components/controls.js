@@ -1,6 +1,8 @@
 import * as THREE from "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js";
 import { PointerLockControls } from "https://threejsfundamentals.org/threejs/resources/threejs/r119/examples/jsm/controls/PointerLockControls.js";
 // import { allobjects } from "../World.js";
+import { scene } from "../World.js";
+import { camera } from "../World.js";
 
 let objects = [];
 let raycaster;
@@ -137,6 +139,7 @@ function createControls(camera, canvas) {
 
       if (onObject === true) {
         velocity.y = Math.max(0, velocity.y);
+        scene.background = new THREE.Color("black");
         canJump = true;
       }
 

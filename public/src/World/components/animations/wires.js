@@ -71,8 +71,6 @@ function createWire() {
     // wires.push(wire);
   }
 
-  //   scene.background = new THREE.Color("blue");
-
   wires.tick = () => {
     wMat.emissiveMap.needsUpdate = true;
 
@@ -109,11 +107,8 @@ function createWire() {
           Math.sin(otherMap),
           barHeight / 2 - data.length
         );
-        // wire.rotation.set(barHeight / 2, barHeight, angle);
-        // wire.position.y += angle;
-        // wire.scale.set(Math.sin(v), Math.sin(otherMap), v);
+
         wire.scale.y += Math.sin(y);
-        // wire.scale.x += angle;
         angle += Math.sin(newMap) * angleV;
         angleV += otherMap;
       }
@@ -128,7 +123,6 @@ function createWire() {
       );
 
       // wires1[i].scale.set(Math.sin(v), Math.sin(otherMap), v);
-
       wires1[i].rotation.set(barHeight / 2, barHeight / angle, 0);
 
       wires1[i].scale.y += v;

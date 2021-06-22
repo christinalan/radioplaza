@@ -44,7 +44,7 @@ function createMainHall() {
   const colorsFloor = [];
 
   for (let i = 0, l = position.count; i < l; i++) {
-    color.setHSL(Math.random(), 0.75, Math.random() * 0.15 + 0.01);
+    color.setHSL(Math.random() * 0.01, 0.75, Math.random() * 0.15 + 0.01);
     colorsFloor.push(color.r, color.g, color.b);
   }
 
@@ -96,9 +96,12 @@ function createDoors() {
 function createWalls() {
   const otherwalls = [];
   const smallGeo = new THREE.PlaneGeometry(400, 250);
+  const textureLoader = new THREE.TextureLoader();
+  const texture = textureLoader.load("/images/textures/russian.png");
 
   const wMat = new THREE.MeshBasicMaterial({
     color: 0x6800005,
+    map: texture,
     // color: 0xffffff,
     side: THREE.DoubleSide,
     transparent: true,
