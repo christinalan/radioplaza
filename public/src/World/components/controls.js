@@ -112,7 +112,7 @@ function createControls(camera, canvas) {
     // objects.push(allobjects);
 
     const time = performance.now();
-    if (controls.isLocked == true) {
+    if (controls.isLocked === true) {
       //   console.log("hello tick activated for controls");
 
       raycaster.ray.origin.copy(controls.getObject().position);
@@ -139,7 +139,6 @@ function createControls(camera, canvas) {
 
       if (onObject === true) {
         velocity.y = Math.max(0, velocity.y);
-        scene.background = new THREE.Color("black");
         canJump = true;
       }
 
@@ -161,4 +160,4 @@ function createControls(camera, canvas) {
   return controls;
 }
 
-export { createControls };
+export { createControls, raycaster };

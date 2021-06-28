@@ -13,7 +13,7 @@ import { createTube } from "./components/animations/leaky.js";
 import { createParticle } from "./components/animations/particles.js";
 import { createWire } from "./components/animations/wires.js";
 import { createStar } from "./components/animations/stars.js";
-// import { createCube } from "./components/animations/cubes.js";
+import { createCube } from "./components/animations/cubes.js";
 
 import { setStream } from "./components/audio.js";
 
@@ -25,6 +25,7 @@ let camera;
 let renderer;
 let scene;
 let loop;
+let controls;
 let allobjects = [];
 
 class World {
@@ -35,7 +36,7 @@ class World {
     loop = new Loop(camera, scene, renderer);
     container.append(renderer.domElement);
 
-    const controls = createControls(camera, renderer.domElement);
+    controls = createControls(camera, renderer.domElement);
     scene.add(controls.getObject());
 
     const ambientL = createAmbient();
@@ -103,7 +104,6 @@ class World {
 
     // for (let i = 0; i < cubes.length; i++) {
     //   scene.add(cubes[i]);
-    //   allobjects.push(cubes[i]);
     // }
 
     const resizer = new Resizer(container, camera, renderer);
@@ -123,4 +123,4 @@ class World {
   }
 }
 
-export { World, camera, scene };
+export { World, camera, scene, controls };

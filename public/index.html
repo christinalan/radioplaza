@@ -10,7 +10,7 @@
         background-color: black;
         height: 100%;
         width: 100%;
-        margin: 0;
+        margin-left: 0.5%;
         /* cursor: none; */
       }
       #startButton {
@@ -24,6 +24,12 @@
         font-size: 16px;
         margin-top: 8px;
         margin-left: 80%;
+      }
+      img {
+        width: 5%;
+      }
+      #space {
+        width: 10%;
       }
     </style>
     <title>Main Radio World</title>
@@ -41,10 +47,24 @@
         <p style="font-size: 36px; color: white; padding: 20px">
           Click start to play
         </p>
-        <p style="color: white; padding: 20px">
-          Cursor: ESC<br />
-          Move: WASD<br />
-          Jump: SPACE<br />
+        <p
+          style="
+            color: white;
+            padding: 20px;
+            font-size: 1.5em;
+            line-height: 2.3;
+            margin-top: -5%;
+          "
+        >
+          Cursor: <img src="images/icons/esc.png" /> <br />
+          Move: <img src="images/icons/w.png" /><img
+            src="images/icons/a.png"
+          /><img src="images/icons/s.png" /><img src="images/icons/d.png" /> or
+          <img src="images/icons/up.png" />
+          <img src="images/icons/left.png" />
+          <img src="images/icons/down.png" />
+          <img src="images/icons/right.png" /><br />
+          Jump: <img id="space" src="images/icons/space.png" /><br />
           Look: MOUSE
         </p>
       </div>
@@ -62,6 +82,6 @@
 
     <!-- world app files all exist in "src" folder -->
     <script type="module" src="./src/main_new.js"></script>
-    <!-- <script type="module" src="./js/alt/main_doesnotwork.js"></script> -->
+    <!-- <script type="module" src="./zfuck/js/alt/main_doesnotwork.js"></script> -->
   </body>
 </html>
