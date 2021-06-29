@@ -7,7 +7,7 @@
     <link href="css/radio.css" rel="stylesheet" />
     <title>Radio Stream</title>
   </head>
-  <body>
+  <body style="margin: 1.5%; font-size: 1.3em">
     <section class="select">
       <label for="audioSource">Audio source: </label>
       <select id="audioSource"></select>
@@ -19,6 +19,7 @@
       <p>
         Streaming From:
         <input
+          style="font-size: 1em"
           class="input"
           id="location"
           type="text"
@@ -26,6 +27,7 @@
         />
         Frequency Broadcasted:
         <input
+          style="font-size: 1em"
           class="input"
           id="frequency"
           type="text"
@@ -33,13 +35,19 @@
         />
         Equipment Used:
         <input
+          style="font-size: 1em"
           class="input"
           id="equipment"
           type="text"
           placeholder="Enter SDR, hardware, antennas, etc."
         />
       </p>
-      <button id="send" style="margin-top: 10px">Stream</button>
+      <button
+        id="send"
+        style="margin-top: 10px; margin-top: -10px; font-size: 1.2em"
+      >
+        Stream
+      </button>
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="radio.js"></script>

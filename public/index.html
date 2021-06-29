@@ -14,7 +14,8 @@
         /* cursor: none; */
       }
       #startButton {
-        margin: 10px;
+        font-size: 1.7em;
+        margin: 20px 25px;
       }
       .radio-info {
         display: none;
@@ -39,12 +40,19 @@
     <div id="overlay" style="margin: 0 auto">
       <button id="startButton" style="font-family: monospace">start</button>
       <audio id="audio" autoplay controls muted style="display: none"></audio>
-      <a href="sendRadio.html">radio stream</a>
+      <a href="sendRadio.html" style="font-size: 1.7em">radio stream</a>
     </div>
 
     <div id="blocker" style="position: fixed">
       <div id="instructions">
-        <p style="font-size: 36px; color: white; padding: 20px">
+        <p
+          style="
+            font-size: 36px;
+            color: white;
+            padding: 20px;
+            margin-top: -0.5%;
+          "
+        >
           Click start to play
         </p>
         <p
